@@ -106,15 +106,26 @@ const recordRoute = (call: any, callback: any) => {
         }
         previous = point;
     });
+
+
     call.on('end', () => {
-        callback(null, {
-            point_count: point_count,
-            feature_count: feature_count,
-            // Cast the distance to an integer
-            distance: distance | 0,
-            // End the timer
-            elapsed_time: process.hrtime(start_time)[0]
-        });
+        // snake_case not working
+        callback(null,
+
+            // {
+            //     point_count: point_count,
+            //     feature_count: feature_count,
+            //     distance: distance | 0,
+            //     elapsed_time: process.hrtime(start_time)[0]
+            // },
+
+            {
+                pointCount: point_count,
+                featureCount: feature_count,
+                distance: distance | 0,
+                elapsedTime: process.hrtime(start_time)[0]
+            }
+        );
     });
 }
 

@@ -15,7 +15,7 @@ const client = new routeguide.routeguide.RouteGuide('localhost:50051', grpc.cred
 const COORD_FACTOR = 1e7;
 
 const runGetFeature = (callback: any) => {
-  console.dir(callback.toString());
+  console.log(callback.toString());
   const next = _.after(2, callback);
   const featureCallback = (error: any, feature: any) => {
 
@@ -71,14 +71,14 @@ const runListFeature = (callback: any) => {
       feature.location.longitude / COORD_FACTOR);
   });
   call.on('end', callback);
+
+  console.log(callback.toString());
 }
 
 const runRecordRoute = (callback: any) => {
   let argv = parseArgs(process.argv, {
     string: 'db_path'
   });
-
-  console.log("here? ", argv.db_path);
 
   fs.readFile(path.resolve(argv.db_path), (err: any, data: any) => {
     if (err) {
@@ -87,18 +87,21 @@ const runRecordRoute = (callback: any) => {
     }
 
     const feature_list = JSON.parse(data);
-    const num_points: number = 10;
+    const num_points: number = 5;
     const call = client.recordRoute((error: any, stats: any) => {
+      console.log(err, stats);
       if (error) {
         callback(error);
         return;
       }
-      console.log('Finished trip with', stats.point_count, 'points');
-      console.log('Passed', stats.feature_count, 'features');
+
+      console.log('Finished trip with', stats.pointCount, 'points');
+      console.log('Passed', stats.featureCount, 'features');
       console.log('Travelled', stats.distance, 'meters');
-      console.log('It took', stats.elapsed_time, 'seconds');
+      console.log('It took', stats.elapsedTime, 'seconds');
       callback();
     });
+
     const pointSender = (lat: number, lng: number) => {
       return (callback: any) => {
         console.log('Visiting point ' + lat / COORD_FACTOR + ', ' +
@@ -110,20 +113,20 @@ const runRecordRoute = (callback: any) => {
         _.delay(callback, _.random(500, 1500));
       }
     }
-    let point_sender = [];
+    let point_senders = [];
 
     for (let i = 0; i < num_points; i++) {
       const rand_point = feature_list[_.random(0, feature_list.length - 1)];
-      point_sender[i] = pointSender(rand_point.location.latitude, rand_point.location.longitude);
+      point_senders[i] = pointSender(rand_point.location.latitude, rand_point.location.longitude);
     }
-    async.series(point_sender, () => {
+
+    async.series(point_senders, () => {
       call.end();
     });
   });
 }
 
 const runRouteChat = (callback: any) => {
-  console.log(callback.toString());
   const call = client.routeChat();
 
   call.on('data', (note: any) => {
@@ -172,8 +175,8 @@ const runRouteChat = (callback: any) => {
 const main = () => {
   async.series([
     // runGetFeature,
-    runListFeature,
-    // runRecordRoute,
+    // runListFeature,
+    runRecordRoute,
     // runRouteChat
   ]);
 }
