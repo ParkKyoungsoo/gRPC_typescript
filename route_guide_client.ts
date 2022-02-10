@@ -53,6 +53,7 @@ interface IRectangle {
 }
 
 const runListFeature = (callback: any) => {
+  console.log("client listFeature",callback.toString());
   let rectangle: IRectangle = {
     lo: {
       latitude: 400000000,
@@ -72,7 +73,6 @@ const runListFeature = (callback: any) => {
   });
   call.on('end', callback);
 
-  console.log(callback.toString());
 }
 
 const runRecordRoute = (callback: any) => {
@@ -176,8 +176,8 @@ const main = () => {
   async.series([
     // runGetFeature,
     // runListFeature,
-    runRecordRoute,
-    // runRouteChat
+    // runRecordRoute,
+    runRouteChat
   ]);
 }
 

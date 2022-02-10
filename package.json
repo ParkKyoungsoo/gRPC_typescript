@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "build:proto": "./node_modules/.bin/proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=proto/proto/*.proto",
     "server": "node dist/route_guide_server.js --db_path=./route_guide_db.json",
     "client": "node dist/route_guide_client.js --db_path=./route_guide_db.json"
   },

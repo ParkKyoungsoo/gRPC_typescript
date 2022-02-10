@@ -41,10 +41,13 @@ const checkFeature = (point: any): IFeature => {
 }
 
 const getFeature = (call: any, callback: any): void => {
+    console.log(callback.toString());
     callback(null, checkFeature(call.request));
 }
 
 const listFeatures = (call: any): void => {
+    console.log(call);
+    
     const lo: IPoint = call.request.lo;
     const hi: IPoint = call.request.hi;
     const left: number = _.min([lo.longitude, hi.longitude]) || -1;
@@ -107,9 +110,12 @@ const recordRoute = (call: any, callback: any) => {
         previous = point;
     });
 
+    console.log(call, callback.toString());
 
     call.on('end', () => {
         // snake_case not working
+
+
         callback(null,
 
             // {
@@ -136,6 +142,8 @@ const pointKey = (point: IPoint): string => {
 }
 
 const routeChat = (call: any) => {
+    console.log(call);
+
     call.on('data', (note: any) => {
         const key: string = pointKey(note.location);
         if (route_notes.hasOwnProperty(key)) {
@@ -145,8 +153,9 @@ const routeChat = (call: any) => {
         } else {
             route_notes[key] = [];
         }
-
+        
         route_notes[key].push(JSON.parse(JSON.stringify(note)));
+        console.log(key, route_notes);
     });
 
     call.on('end', () => {
